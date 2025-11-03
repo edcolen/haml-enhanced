@@ -1,19 +1,56 @@
 -# ============================================================================
 -# HAML Enhanced - Comprehensive Test File
 -# ============================================================================
--# This file tests all syntax highlighting features including multiline hashes
+-# This file tests ALL syntax highlighting features for HAML including:
+-# - DOCTYPE declarations
+-# - Comments (HAML, HTML, conditional)
+-# - Tags (basic, self-closing, with content)
+-# - Classes, IDs, and combinations
+-# - Attributes (hash, HTML-style, multiline, mixed)
+-# - Object references [@object]
+-# - Ruby code blocks (silent, output, unescaped, sanitized)
+-# - String interpolation and escaping
+-# - Whitespace removal (>, <, ><)
+-# - Multi-line content
+-# - All filters: Ruby, CSS, JavaScript, SASS, SCSS, Markdown, CoffeeScript,
+-#   HTML, ERB, LESS, Textile, Plain, Escaped, Preserve, CDATA
+-# - Complex real-world examples
+-# - Edge cases and special syntax
 
 
 -# ============================================================================
--# 1. COMMENTS
+-# 1. DOCTYPE DECLARATIONS
+-# ============================================================================
+
+!!! 5
+!!! Strict
+!!! Frameset
+!!! XML
+!!! Transitional
+
+
+-# ============================================================================
+-# 2. COMMENTS
 -# ============================================================================
 
 -# This is a HAML comment (not rendered)
 / This is an HTML comment (rendered)
 
+-# Multi-line HAML comment
+-# spanning multiple lines
+-# not rendered to HTML
+
+/ Multi-line HTML comment
+  also spanning multiple lines
+  rendered to HTML
+
+/[if IE]
+  %link{href: "ie.css", rel: "stylesheet"}
+  %script{src: "ie.js"}
+
 
 -# ============================================================================
--# 2. BASIC HAML TAGS
+-# 3. BASIC HAML TAGS
 -# ============================================================================
 
 %div
@@ -22,9 +59,33 @@
 %h1 Basic heading
 %p This is a paragraph
 
+-# Tag with inline content
+%h2 Inline Heading Content
+%p Inline paragraph content
+
+-# Tag with content and children
+%div This is parent content
+  %p This is a child element
+  %span Another child
+
+-# Nested tags with multi-line content
+%div
+  This is parent content
+  %p
+    This is a child element
+    %span
+      Another child
+
+-# Self-closing tags
+%br/
+%hr/
+%img{src: "image.jpg", alt: "Description"}/
+%input{type: "text"}/
+%meta{charset: "utf-8"}/
+
 
 -# ============================================================================
--# 3. CLASSES AND IDS
+-# 4. CLASSES AND IDS
 -# ============================================================================
 
 %div.container
@@ -34,10 +95,12 @@
 .implicit-div
 #implicit-id
 .multiple.classes.chained
+%span#user-123.active.highlighted
+.row.justify-content-center
 
 
 -# ============================================================================
--# 4. SINGLE-LINE HASH ATTRIBUTES
+-# 5. SINGLE-LINE HASH ATTRIBUTES
 -# ============================================================================
 
 %div{ class: "simple", id: "test" }
@@ -45,9 +108,23 @@
 %input{ type: "text", name: "username", placeholder: "Enter name" }
 %div{ data: { controller: "stimulus" } }
 
+-# Boolean attributes
+%input{ type: "checkbox", checked: true, disabled: false }
+%button{ disabled: true } Disabled Button
+%input{ required: true, autofocus: true }
+
+-# HTML-style attributes (parentheses)
+%img(src="/image.jpg" alt="Description" class="responsive")
+%a(href="http://example.com" target="_blank") Link text
+%input(type="text" name="username" required disabled)
+
+-# Mixed hash and HTML-style attributes
+%div{class: "hash-style"}(id="html-style" data-value="mixed")
+%button{type: "submit"}(disabled class="btn")
+
 
 -# ============================================================================
--# 5. MULTILINE HASH ATTRIBUTES (Main Feature!)
+-# 6. MULTILINE HASH ATTRIBUTES (Main Feature!)
 -# ============================================================================
 
 -# Test 1: Basic multiline hash
@@ -90,13 +167,23 @@
   data: { id: user.id, name: "#{user.first_name} #{user.last_name}" }
 }
 
--# Test 5: HTML-style attributes with parentheses
-%img(src="/image.jpg" alt="Description" class="responsive")
-%a(href="http://example.com" target="_blank") Link text
+
+-# ============================================================================
+-# 7. OBJECT REFERENCE SYNTAX
+-# ============================================================================
+
+-# Object reference with single object
+%div[@user]
+
+-# Object reference with multiple objects
+%div[@user, :admin]
+
+-# Object reference with class
+%div.card[@post]
 
 
 -# ============================================================================
--# 6. RUBY CODE BLOCKS
+-# 8. RUBY CODE BLOCKS
 -# ============================================================================
 
 -# Silent Ruby code (-)
@@ -118,30 +205,110 @@
 - else
   %span.badge.unknown Unknown
 
+-# Multi-line Ruby with continuation
+- result = some_method(
+-   param1: "value",
+-   param2: 42
+- )
+
 
 -# ============================================================================
--# 7. OUTPUT RUBY CODE (=)
+-# 9. OUTPUT RUBY CODE (=, !=, &=)
 -# ============================================================================
 
+-# Standard escaped output (=)
 = title
 = user.full_name
 = link_to "Home", root_path
 = render "partial", locals: { key: "value", number: 42 }
 = content_tag :div, "Content", class: "wrapper"
 
+-# Multi-line output with pipe continuation
+= link_to "Very long link text", |
+  some_very_long_path,      |
+  class: "btn btn-primary", |
+  data: { confirm: "Are you sure?" } |
+
+-# Unescaped output (!=)
+!= raw_html_content
+!= "<strong>Bold text</strong>"
+!= user.bio_html
+
+-# Sanitized output (&=)
+&= user_input
+&= potentially_unsafe_content
+&= "<script>alert('xss')</script>"
+
 
 -# ============================================================================
--# 8. STRING INTERPOLATION
+-# 10. STRING INTERPOLATION AND ESCAPING
 -# ============================================================================
 
+-# Basic interpolation
 %p Welcome, #{user.name}!
 %h1 Total: #{items.count} items
 .alert-#{type} Message: #{message}
 %div{ class: "container-#{size}", id: "item-#{item.id}" }
 
+-# Escaped interpolation (not interpolated)
+%p This has a \#{not_interpolated} value
+%p Price: \$#{price}
+
+-# Complex expressions
+%p Total: $#{(price * quantity).round(2)}
+%div{ class: "status-#{status.downcase.gsub(' ', '-')}" }
+
 
 -# ============================================================================
--# 9. RUBY FILTERS
+-# 11. WHITESPACE REMOVAL
+-# ============================================================================
+
+-# Remove trailing whitespace (>)
+%p> Content with trailing space removed
+%blockquote>
+  %p Nested content
+  with trailing space removed
+
+-# Remove leading whitespace (<)
+%p< Content with leading space removed
+%li<
+  Item text
+
+-# Both sides
+%tag>< Content with spaces removed both sides
+
+-# Practical use case
+%ul
+  %li> Item 1
+  %li> Item 2
+  %li> Item 3
+
+
+-# ============================================================================
+-# 12. MULTI-LINE CONTENT
+-# ============================================================================
+
+-# Multi-line plain text
+%p
+  This is a multi-line paragraph
+  that spans multiple lines
+  and preserves the line breaks
+
+-# Multi-line with interpolation
+%div
+  Welcome back, #{user.name}!
+  You have #{unread_count} unread messages
+  and #{notifications.count} notifications
+
+-# Preserve whitespace with |
+%pre
+  | Line 1
+  | Line 2
+  |   Indented line 3
+
+
+-# ============================================================================
+-# 13. RUBY FILTERS
 -# ============================================================================
 
 :ruby
@@ -151,10 +318,683 @@
   
   @variable = calculate_something
   items = [1, 2, 3].map { |n| n * 2 }
+  
+  # Complex Ruby logic
+  result = items.reduce(0) do |sum, item|
+    sum + item
+  end
 
 
 -# ============================================================================
--# 10. COMPLEX REAL-WORLD EXAMPLE
+-# 14. CSS FILTER
+-# ============================================================================
+
+-# Test 1: Basic CSS rules
+:css
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+
+-# Test 2: CSS with media queries
+:css
+  .responsive-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .responsive-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .mobile-menu {
+      display: block;
+    }
+  }
+
+-# Test 3: CSS variables and advanced selectors
+:css
+  :root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --font-size-base: 16px;
+    --spacing-unit: 8px;
+  }
+  
+  .card > .card-header,
+  .card > .card-footer {
+    padding: var(--spacing-unit);
+    background: var(--primary-color);
+  }
+  
+  .card:nth-child(odd) {
+    background-color: #f5f5f5;
+  }
+
+-# Test 4: CSS animations and keyframes
+:css
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .animated-element {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .loader {
+    animation: spin 1s linear infinite;
+  }
+
+-# Test 5: CSS transforms and transitions
+:css
+  .card {
+    transform: perspective(1000px) rotateY(0deg);
+    transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+  
+  .card:hover {
+    transform: perspective(1000px) rotateY(10deg) scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+  
+  .flex-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+
+-# ============================================================================
+-# 15. JAVASCRIPT FILTER
+-# ============================================================================
+
+-# Test 1: Basic JavaScript with variables and functions
+:javascript
+  const API_URL = 'https://api.example.com';
+  let currentUser = null;
+  
+  function fetchUserData(userId) {
+    return fetch(`${API_URL}/users/${userId}`)
+      .then(response => response.json())
+      .catch(error => console.error('Error:', error));
+  }
+  
+  const greetUser = (name) => {
+    console.log(`Hello, ${name}!`);
+  };
+
+-# Test 2: DOM manipulation and event listeners
+:javascript
+  document.addEventListener('DOMContentLoaded', () => {
+    const button = document.querySelector('.submit-button');
+    const form = document.getElementById('user-form');
+    
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      submitForm(formData);
+    });
+    
+    function submitForm(data) {
+      const entries = Object.fromEntries(data);
+      console.log('Submitting:', entries);
+    }
+  });
+
+-# Test 3: ES6+ features and async/await
+:javascript
+  class UserManager {
+    constructor(apiUrl) {
+      this.apiUrl = apiUrl;
+      this.users = [];
+    }
+    
+    async loadUsers() {
+      try {
+        const response = await fetch(`${this.apiUrl}/users`);
+        const { data, meta } = await response.json();
+        this.users = data;
+        return { success: true, count: meta.total };
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
+    }
+    
+    findUser(id) {
+      return this.users.find(user => user.id === id);
+    }
+  }
+  
+  const manager = new UserManager(API_URL);
+
+-# Test 4: Destructuring, spread, and array methods
+:javascript
+  // Destructuring
+  const { name, email, ...rest } = user;
+  const [first, second, ...others] = items;
+  
+  // Spread operator
+  const combined = [...array1, ...array2];
+  const merged = { ...defaults, ...userOptions };
+  
+  // Array methods
+  const doubled = numbers.map(n => n * 2);
+  const filtered = users.filter(u => u.active);
+  const total = prices.reduce((sum, price) => sum + price, 0);
+  
+  // Template literals
+  const message = `User ${name} has ${count} items`;
+  const multiline = `
+    Line 1
+    Line 2
+    Line 3
+  `;
+
+-# Test 5: jQuery (common in Rails apps)
+:javascript
+  $(document).ready(function() {
+    $('.dropdown-toggle').on('click', function(e) {
+      e.preventDefault();
+      $(this).next('.dropdown-menu').slideToggle(200);
+    });
+    
+    $('#search-input').on('input', _.debounce(function() {
+      const query = $(this).val();
+      if (query.length > 2) {
+        performSearch(query);
+      }
+    }, 300));
+    
+    function performSearch(query) {
+      $.ajax({
+        url: '/search',
+        method: 'GET',
+        data: { q: query },
+        success: function(results) {
+          displayResults(results);
+        }
+      });
+    }
+  });
+
+
+-# ============================================================================
+-# 16. SASS FILTER
+-# ============================================================================
+
+-# Test 1: Basic SASS syntax
+:sass
+  $primary-color: #3498db
+  $secondary-color: #2ecc71
+  $font-size-base: 16px
+  
+  .container
+    max-width: 1200px
+    margin: 0 auto
+    padding: 20px
+  
+  .button
+    background-color: $primary-color
+    color: white
+    border: none
+    border-radius: 4px
+    padding: 10px 20px
+    
+    &:hover
+      background-color: darken($primary-color, 10%)
+    
+    &.active
+      font-weight: bold
+
+-# Test 2: SASS with mixins and nesting
+:sass
+  @mixin flex-center
+    display: flex
+    justify-content: center
+    align-items: center
+  
+  @mixin respond-to($breakpoint)
+    @media (max-width: $breakpoint)
+      @content
+  
+  .card
+    @include flex-center
+    background: white
+    border-radius: 8px
+    
+    .card-header
+      font-size: 1.2em
+      font-weight: bold
+    
+    @include respond-to(768px)
+      padding: 10px
+
+-# Test 3: SASS with @import and @extend
+:sass
+  @import 'variables'
+  @import 'mixins'
+  
+  %button-base
+    padding: 10px 20px
+    border-radius: 4px
+    cursor: pointer
+  
+  .button-primary
+    @extend %button-base
+    background: $primary-color
+    color: white
+  
+  .button-secondary
+    @extend %button-base
+    background: $secondary-color
+    color: white
+
+
+-# ============================================================================
+-# 17. SCSS FILTER
+-# ============================================================================
+
+-# Test 1: Basic SCSS syntax (with braces)
+:scss
+  $primary-color: #3498db;
+  $secondary-color: #2ecc71;
+  $spacing-unit: 8px;
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: $spacing-unit * 2;
+  }
+  
+  .button {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+    
+    &.active {
+      font-weight: bold;
+    }
+  }
+
+-# Test 2: SCSS with mixins and functions
+:scss
+  @mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  @function calculate-spacing($multiplier) {
+    @return $spacing-unit * $multiplier;
+  }
+  
+  .component {
+    @include flex-center;
+    padding: calculate-spacing(3);
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+-# Test 3: SCSS with @import, @use, and @extend
+:scss
+  @import 'variables';
+  @use 'mixins' as mx;
+  
+  %card-base {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card {
+    @extend %card-base;
+    
+    &-header {
+      @include mx.flex-center;
+      border-bottom: 1px solid #eee;
+    }
+  }
+
+
+-# ============================================================================
+-# 18. MARKDOWN FILTER
+-# ============================================================================
+
+-# Test 1: Basic Markdown
+:markdown
+  # Main Heading
+  
+  This is a paragraph with **bold text** and *italic text*.
+  
+  ## Subheading
+  
+  - First item
+  - Second item
+  - Third item
+  
+  [Link to example](http://example.com)
+  
+  `inline code` and code blocks:
+  
+  ```ruby
+  def hello
+    puts "Hello, World!"
+  end
+  ```
+
+-# Test 2: Markdown with tables and lists
+:markdown
+  ## User List
+  
+  | Name | Email | Role |
+  |------|-------|------|
+  | John | john@example.com | Admin |
+  | Jane | jane@example.com | User |
+  
+  ### Features
+  1. Feature one
+  2. Feature two
+  3. Feature three
+  
+  > This is a blockquote
+  > with multiple lines
+
+
+-# ============================================================================
+-# 19. COFFEESCRIPT FILTER
+-# ============================================================================
+
+-# Test 1: Basic CoffeeScript
+:coffee
+  API_URL = 'https://api.example.com'
+  currentUser = null
+  
+  fetchUserData = (userId) ->
+    fetch "#{API_URL}/users/#{userId}"
+      .then (response) -> response.json()
+      .catch (error) -> console.error 'Error:', error
+  
+  greetUser = (name) ->
+    console.log "Hello, #{name}!"
+
+-# Test 2: CoffeeScript classes and async
+:coffee
+  class UserManager
+    constructor: (@apiUrl) ->
+      @users = []
+    
+    loadUsers: ->
+      try
+        response = await fetch "#{@apiUrl}/users"
+        {data, meta} = await response.json()
+        @users = data
+        {success: true, count: meta.total}
+      catch error
+        {success: false, error: error.message}
+    
+    findUser: (id) ->
+      @users.find (user) -> user.id is id
+
+
+-# ============================================================================
+-# 20. HTML FILTER
+-# ============================================================================
+
+-# Test 1: Basic HTML
+:html
+  <div class="container">
+    <h1>Raw HTML Content</h1>
+    <p>This is raw HTML embedded in HAML</p>
+    <button class="btn btn-primary" onclick="alert('clicked')">
+      Click Me
+    </button>
+  </div>
+
+-# Test 2: HTML with complex structure
+:html
+  <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="#">Brand</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Features</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+-# Test 3: HTML with inline styles and scripts
+:html
+  <div style="background-color: #f0f0f0; padding: 20px;">
+    <h2 style="color: #333; font-family: Arial, sans-serif;">Styled Content</h2>
+    <script type="text/javascript">
+      console.log('Inline script in HTML filter');
+      document.addEventListener('DOMContentLoaded', function() {
+        alert('Page loaded');
+      });
+    </script>
+  </div>
+
+-# Test 4: HTML with SVG
+:html
+  <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+    <rect x="10" y="10" width="30" height="30" fill="blue" />
+    <path d="M 10 80 Q 52.5 40, 95 80" stroke="red" fill="transparent"/>
+  </svg>
+
+-# Test 5: HTML with data attributes and modern attributes
+:html
+  <article class="post" data-post-id="123" data-category="tech">
+    <header>
+      <h1 class="post-title">Article Title</h1>
+      <time datetime="2023-11-03T10:00:00">November 3, 2023</time>
+    </header>
+    <section class="post-content">
+      <p>Article content goes here...</p>
+    </section>
+    <footer>
+      <a href="#" rel="nofollow" target="_blank">Read more</a>
+    </footer>
+  </article>
+
+
+-# ============================================================================
+-# 21. ERB FILTER
+-# ============================================================================
+
+-# Test 1: Basic ERB
+:erb
+  <div class="container">
+    <h1><%= title %></h1>
+    <p>Welcome, <%= user.name %>!</p>
+    
+    <% if user.admin? %>
+      <button class="admin-btn">Admin Panel</button>
+    <% end %>
+    
+    <% users.each do |user| %>
+      <div class="user-card">
+        <h3><%= user.name %></h3>
+        <p><%= user.email %></p>
+      </div>
+    <% end %>
+  </div>
+
+-# Test 2: ERB with helpers
+:erb
+  <%= render partial: "shared/header", locals: { title: page_title } %>
+  
+  <%= form_with model: @user do |f| %>
+    <%= f.text_field :name %>
+    <%= f.email_field :email %>
+    <%= f.submit "Save" %>
+  <% end %>
+  
+  <%= link_to "Home", root_path, class: "btn btn-primary" %>
+
+
+-# ============================================================================
+-# 22. LESS FILTER
+-# ============================================================================
+
+-# Test 1: Basic LESS
+:less
+  @primary-color: #3498db;
+  @secondary-color: #2ecc71;
+  @spacing-unit: 8px;
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: @spacing-unit * 2;
+  }
+  
+  .button {
+    background-color: @primary-color;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    
+    &:hover {
+      background-color: darken(@primary-color, 10%);
+    }
+  }
+
+-# Test 2: LESS with mixins
+:less
+  .flex-center() {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .card {
+    .flex-center();
+    background: white;
+    border-radius: 8px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+
+-# ============================================================================
+-# 23. TEXTILE FILTER
+-# ============================================================================
+
+-# Test 1: Basic Textile
+:textile
+  h1. Main Heading
+  
+  This is a paragraph with *bold text* and _italic text_.
+  
+  h2. Subheading
+  
+  * First item
+  * Second item
+  * Third item
+  
+  "Link text":http://example.com
+  
+  @inline code@
+  
+  bc. Code block:
+  def hello
+    puts "Hello, World!"
+  end
+
+-# Test 2: Textile with tables
+:textile
+  |_. Name|_. Email|_. Role|
+  |John|john@example.com|Admin|
+  |Jane|jane@example.com|User|
+  
+  bq. This is a blockquote
+  with multiple lines
+
+
+-# ============================================================================
+-# 24. PLAIN TEXT FILTERS
+-# ============================================================================
+
+-# Test 1: Plain filter
+:plain
+  This is plain text
+  with no HTML escaping
+  or special formatting
+  
+  Multiple lines preserved
+  as-is
+
+-# Test 2: Escaped filter
+:escaped
+  This text will be HTML-escaped
+  & < > " ' characters
+  will be converted to entities
+
+-# Test 3: Preserve filter
+:preserve
+  This preserves whitespace
+    and   spacing
+  exactly as written
+
+-# Test 4: CDATA filter
+:cdata
+  <script>
+    var data = { key: "value" };
+    // This content is wrapped in CDATA
+  </script>
+
+
+-# ============================================================================
+-# 25. COMPLEX REAL-WORLD EXAMPLE
 -# ============================================================================
 
 - if is_mobile
@@ -204,7 +1044,7 @@
 
 
 -# ============================================================================
--# 11. EDGE CASES
+-# 26. EDGE CASES AND SPECIAL SYNTAX
 -# ============================================================================
 
 -# Empty tag
@@ -216,7 +1056,7 @@
 -# Tag with only ID
 #id-only
 
--# Self-closing tag
+-# Self-closing tags (already covered in section 3, but here for edge cases)
 %br/
 %hr/
 %img{src: "image.jpg"}/
@@ -235,6 +1075,59 @@
 
 -# Mixed attribute styles
 %input{type: "text"}(required="required")
+
+-# Inline conditionals
+%div{class: condition ? "active" : "inactive"}
+%p= enabled ? "On" : "Off"
+
+-# Ruby blocks without explicit iteration
+- 3.times do
+  %p Repeated content
+
+-# Comments within tags
+%div -# This is a comment
+  %p Content
+
+-# Special characters in content
+%p Use &amp; for ampersand
+%p Less than: &lt; Greater than: &gt;
+%p Quote: &quot; Apostrophe: &apos;
+
+-# Helper methods with blocks
+= form_for @user do |f|
+  = f.text_field :name
+  = f.submit
+
+= content_for :sidebar do
+  %h3 Sidebar Title
+  %p Sidebar content
+
+-# Data attributes (underscores converted to dashes)
+%div{ data: { user_id: 123, tab_index: 0 } }
+%div{ "data-user-id": 123, "data-tab-index": 0 }
+
+-# ARIA attributes
+%button{ role: "button", "aria-label": "Close", "aria-expanded": false }
+%div{ "aria-hidden": true, "aria-live": "polite" }
+
+-# Symbol keys vs string keys
+%div{ :class => "old-style", :id => "hash-rocket" }
+%div{ "class" => "string-keys", "id" => "test" }
+
+-# Multiline string in attributes
+%div{
+  title: "This is a very long title that spans " +
+         "multiple lines in the source code",
+  alt: "Another long string"
+}
+
+-# Method chaining in interpolation
+%p User: #{user.name.upcase.truncate(20)}
+%div{ class: "#{user.role.to_s.dasherize}-user" }
+
+-# Arrays in attributes (joined with spaces)
+%div{ class: ["btn", "btn-primary", active ? "active" : nil] }
+%span{ class: [base_class, modifier_class, state_class].compact }
 
 
 -# ============================================================================

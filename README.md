@@ -9,8 +9,26 @@ Enhanced HAML syntax highlighting for Visual Studio Code with proper multi-line 
 - **HAML Tags**: Complete support for HAML tags, classes, and IDs
 - **Ruby Variables & Symbols**: Proper highlighting of variables, symbols, and constants
 - **Block Parameters**: Highlights block parameters and pipes
-- **Filters**: Syntax highlighting for Ruby filters
+- **Doctype Declarations**: Highlights `!!!` doctype declarations
+- **Object References**: Highlights `[@object]` syntax
 - **String Interpolation**: Proper highlighting of `#{}` interpolations
+- **Multi-line Comments**: Proper highlighting for HTML comments spanning multiple lines
+- **Filters**: Comprehensive syntax highlighting for all HAML filters:
+  - **Ruby** (`:ruby`) - Full Ruby syntax highlighting
+  - **CSS** (`:css`) - CSS syntax highlighting
+  - **JavaScript** (`:javascript`) - JavaScript syntax highlighting
+  - **SASS** (`:sass`) - SASS syntax highlighting with variables, mixins, and nesting
+  - **SCSS** (`:scss`) - SCSS syntax highlighting
+  - **Markdown** (`:markdown`, `:md`) - Markdown syntax highlighting
+  - **CoffeeScript** (`:coffee`, `:coffeescript`) - CoffeeScript syntax highlighting
+  - **HTML** (`:html`) - HTML syntax highlighting
+  - **ERB** (`:erb`) - ERB syntax highlighting with embedded Ruby code
+  - **LESS** (`:less`) - LESS syntax highlighting
+  - **Textile** (`:textile`) - Textile syntax highlighting
+  - **Plain** (`:plain`) - Plain text filter
+  - **Escaped** (`:escaped`) - Escaped text filter
+  - **Preserve** (`:preserve`) - Preserve whitespace filter
+  - **CDATA** (`:cdata`) - CDATA filter
 
 ## Screenshots
 
@@ -51,13 +69,14 @@ Other extensions treat the continuation lines as plain text. HAML Enhanced prope
 
 Or install directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=EdColen.haml-enhanced)
 
-### From VSIX (Alternative)
-1. Download the `.vsix` file from [GitHub Releases](https://github.com/edcolen/haml-enhanced/releases)
-2. Open VS Code
+### From Open VSX
+1. Open VS Code (or compatible editor)
+2. Configure Open VSX registry in your [user settings](https://open-vsx.org/user-settings/extensions)
 3. Go to Extensions (`Cmd+Shift+X` / `Ctrl+Shift+X`)
-4. Click the "..." menu at the top
-5. Select "Install from VSIX..."
-6. Choose the downloaded file
+4. Search for "HAML Enhanced"
+5. Click Install
+
+Or install directly from [Open VSX](https://open-vsx.org/extension/EdColen/haml-enhanced)
 
 ## Usage
 

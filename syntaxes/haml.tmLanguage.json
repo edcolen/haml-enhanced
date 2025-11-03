@@ -3,8 +3,23 @@
     "scopeName": "text.haml",
     "fileTypes": ["haml"],
     "patterns": [
+        { "include": "#doctype" },
         { "include": "#comment" },
         { "include": "#ruby-filter" },
+        { "include": "#css-filter" },
+        { "include": "#javascript-filter" },
+        { "include": "#sass-filter" },
+        { "include": "#scss-filter" },
+        { "include": "#markdown-filter" },
+        { "include": "#coffee-filter" },
+        { "include": "#html-filter" },
+        { "include": "#erb-filter" },
+        { "include": "#less-filter" },
+        { "include": "#textile-filter" },
+        { "include": "#plain-filter" },
+        { "include": "#escaped-filter" },
+        { "include": "#preserve-filter" },
+        { "include": "#cdata-filter" },
         { "include": "#ruby-control-flow" },
         { "include": "#haml-tag-with-multiline-hash" },
         { "include": "#haml-tag" },
@@ -12,11 +27,55 @@
         { "include": "#plain-text" }
     ],
     "repository": {
+        "doctype": {
+            "patterns": [
+                {
+                    "name": "meta.doctype.haml",
+                    "match": "^\\s*(!!!)\\s*(\\d+|Strict|Frameset|XML|Transitional|1\\.0|1\\.1|4\\.01)?\\s*$",
+                    "captures": {
+                        "1": { "name": "keyword.other.doctype.haml" },
+                        "2": { "name": "constant.language.doctype.haml" }
+                    }
+                }
+            ]
+        },
         "comment": {
             "patterns": [
                 {
                     "name": "comment.line.haml",
-                    "match": "^\\s*(-#|/).*$"
+                    "match": "^\\s*(-#).*$"
+                },
+                {
+                    "name": "comment.block.html.haml",
+                    "begin": "^(\\s*)(/)(?!\\[)",
+                    "beginCaptures": {
+                        "1": { "name": "punctuation.whitespace.comment.leading.haml" },
+                        "2": { "name": "punctuation.definition.comment.haml" }
+                    },
+                    "end": "^(?!\\1\\s)",
+                    "patterns": [
+                        {
+                            "name": "comment.block.html.haml",
+                            "match": "^\\s+(.*)$",
+                            "captures": {
+                                "1": { "name": "comment.block.html.haml" }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "comment.conditional.html.haml",
+                    "begin": "^(\\s*)(/)\\[",
+                    "beginCaptures": {
+                        "2": { "name": "punctuation.definition.comment.haml" }
+                    },
+                    "end": "\\]",
+                    "patterns": [
+                        {
+                            "name": "comment.conditional.html.haml",
+                            "match": ".*"
+                        }
+                    ]
                 }
             ]
         },
@@ -29,6 +88,492 @@
             "patterns": [
                 { "include": "source.ruby" },
                 { "include": "#ruby-code-fallback" }
+            ]
+        },
+        "css-filter": {
+            "begin": "^(\\s*)(:css)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "source.css" }
+            ]
+        },
+        "javascript-filter": {
+            "begin": "^(\\s*)(:javascript)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "source.js" }
+            ]
+        },
+        "sass-filter": {
+            "begin": "^(\\s*)(:sass)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "#sass-syntax" }
+            ]
+        },
+        "sass-syntax": {
+            "patterns": [
+                {
+                    "name": "comment.line.sass",
+                    "match": "//.*$"
+                },
+                {
+                    "name": "comment.block.sass",
+                    "begin": "/\\*",
+                    "end": "\\*/"
+                },
+                {
+                    "name": "variable.other.sass",
+                    "match": "\\$[a-zA-Z_][a-zA-Z0-9_-]*"
+                },
+                {
+                    "name": "meta.mixin.definition.sass",
+                    "begin": "^\\s*@mixin\\s+",
+                    "end": "$",
+                    "beginCaptures": {
+                        "0": { "name": "keyword.control.sass" }
+                    },
+                    "patterns": [
+                        {
+                            "name": "entity.name.function.mixin.sass",
+                            "match": "([a-zA-Z_][a-zA-Z0-9_-]*)"
+                        }
+                    ]
+                },
+                {
+                    "name": "meta.mixin.include.sass",
+                    "begin": "^\\s*@include\\s+",
+                    "end": "$",
+                    "beginCaptures": {
+                        "0": { "name": "keyword.control.sass" }
+                    },
+                    "patterns": [
+                        {
+                            "name": "entity.name.function.mixin.sass",
+                            "match": "([a-zA-Z_][a-zA-Z0-9_-]*)"
+                        }
+                    ]
+                },
+                {
+                    "name": "keyword.control.sass",
+                    "match": "@(mixin|include|import|extend|if|else|for|each|while|function|return|use|forward|warn|error|debug|at-root|media|supports|keyframes|content)"
+                },
+                {
+                    "name": "support.function.sass",
+                    "match": "\\b(darken|lighten|saturate|desaturate|adjust-hue|adjust-color|scale-color|change-color|mix|hue|saturation|lightness|opacity|red|green|blue|alpha|transparentize|opacify|complement|invert|grayscale|rgb|rgba|hsl|hsla|percentage|round|ceil|floor|abs|min|max|random|length|nth|join|append|zip|index|type-of|unit|unitless|comparable|str-length|str-insert|str-index|str-slice|to-upper-case|to-lower-case|map-get|map-merge|map-remove|map-keys|map-values|map-has-key|keywords|selector-nest|selector-append|selector-extend|selector-replace|selector-unify|is-superselector|simple-selectors|selector-parse|feature-exists|variable-exists|global-variable-exists|function-exists|mixin-exists|inspect|if|call|get-function)\\s*\\("
+                },
+                {
+                    "name": "entity.other.attribute-name.parent-selector.sass",
+                    "match": "&(:[a-zA-Z-]+|\\.[a-zA-Z0-9_-]+|#[a-zA-Z0-9_-]+)"
+                },
+                {
+                    "name": "entity.other.attribute-name.parent-selector.sass",
+                    "match": "&"
+                },
+                {
+                    "name": "entity.other.attribute-name.pseudo-class.css",
+                    "match": "(:hover|:active|:focus|:visited|:link|:target|:first-child|:last-child|:nth-child|:nth-of-type|:not|:empty|:disabled|:enabled|:checked|:indeterminate|:default|:required|:optional|:valid|:invalid|:in-range|:out-of-range|:read-only|:read-write|:root|:first-of-type|:last-of-type|:only-child|:only-of-type|:lang|:before|:after)\\b"
+                },
+                {
+                    "name": "constant.numeric.css",
+                    "match": "\\b\\d+(?:\\.\\d+)?(?:px|em|rem|pt|pc|in|cm|mm|ex|ch|vw|vh|vmin|vmax|%|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx)(?!\\w)"
+                },
+                {
+                    "name": "constant.numeric.css",
+                    "match": "\\b\\d+(?:\\.\\d+)?(?!\\w)"
+                },
+                {
+                    "name": "support.type.property-name.css",
+                    "match": "\\b([a-z-]+)\\s*:",
+                    "captures": {
+                        "1": { "name": "support.type.property-name.css" }
+                    }
+                },
+                {
+                    "name": "support.constant.property-value.css",
+                    "match": "\\b(auto|none|initial|inherit|unset|revert|center|left|right|top|bottom|middle|flex|block|inline|inline-block|table|table-row|table-cell|absolute|relative|fixed|static|sticky|normal|bold|italic|underline|overline|line-through|solid|dashed|dotted|hidden|visible|scroll|transparent|both|clear|float|nowrap|wrap|wrap-reverse|row|column|row-reverse|column-reverse|flex-start|flex-end|space-between|space-around|space-evenly|stretch|baseline|content-box|border-box|cover|contain|repeat|no-repeat|repeat-x|repeat-y|pointer|cursor|default|text|not-allowed|wait|progress|help|move|grab|grabbing|alias|copy|context-menu|zoom-in|zoom-out|all-scroll|col-resize|row-resize|n-resize|e-resize|s-resize|w-resize|ne-resize|nw-resize|se-resize|sw-resize|ew-resize|ns-resize|nesw-resize|nwse-resize|cell|crosshair|vertical-text)\\b"
+                },
+                {
+                    "name": "entity.name.tag.sass",
+                    "match": "^\\s*(\\.|#|%|&)[a-zA-Z0-9_-]+"
+                },
+                {
+                    "name": "entity.name.tag.sass",
+                    "match": "^\\s+[a-zA-Z0-9_-]+(?!px|em|rem|pt|pc|in|cm|mm|ex|ch|vw|vh|vmin|vmax|%|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx)"
+                },
+                {
+                    "name": "support.constant.color.css",
+                    "match": "\\b(transparent|black|silver|gray|white|maroon|red|purple|fuchsia|green|lime|olive|yellow|navy|blue|teal|aqua)\\b"
+                },
+                {
+                    "name": "constant.other.color.rgb-value.css",
+                    "match": "#[0-9a-fA-F]{3,8}"
+                },
+                {
+                    "name": "string.quoted.single.css",
+                    "begin": "'",
+                    "end": "'"
+                },
+                {
+                    "name": "string.quoted.double.css",
+                    "begin": "\"",
+                    "end": "\""
+                },
+                {
+                    "name": "punctuation.definition.interpolation.sass",
+                    "match": "#\\{"
+                }
+            ]
+        },
+        "scss-filter": {
+            "begin": "^(\\s*)(:scss)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "source.css.scss" }
+            ]
+        },
+        "markdown-filter": {
+            "begin": "^(\\s*)(:markdown|:md)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "text.html.markdown" }
+            ]
+        },
+        "coffee-filter": {
+            "begin": "^(\\s*)(:coffee|:coffeescript)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "source.coffee" }
+            ]
+        },
+        "html-filter": {
+            "begin": "^(\\s*)(:html)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "text.html.basic" }
+            ]
+        },
+        "erb-filter": {
+            "begin": "^(\\s*)(:erb)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "#erb-syntax" }
+            ]
+        },
+        "erb-syntax": {
+            "patterns": [
+                {
+                    "name": "meta.embedded.line.erb",
+                    "begin": "<%=",
+                    "beginCaptures": {
+                        "0": { "name": "punctuation.section.embedded.begin.erb" }
+                    },
+                    "end": "%>",
+                    "endCaptures": {
+                        "0": { "name": "punctuation.section.embedded.end.erb" }
+                    },
+                    "patterns": [
+                        { "include": "source.ruby" },
+                        { "include": "#ruby-code-fallback" }
+                    ]
+                },
+                {
+                    "name": "meta.embedded.line.erb",
+                    "begin": "<%",
+                    "beginCaptures": {
+                        "0": { "name": "punctuation.section.embedded.begin.erb" }
+                    },
+                    "end": "%>",
+                    "endCaptures": {
+                        "0": { "name": "punctuation.section.embedded.end.erb" }
+                    },
+                    "patterns": [
+                        {
+                            "name": "comment.line.number-sign.erb",
+                            "match": "^#"
+                        },
+                        { "include": "source.ruby" },
+                        { "include": "#ruby-code-fallback" }
+                    ]
+                },
+                {
+                    "name": "meta.tag.html",
+                    "begin": "<",
+                    "beginCaptures": {
+                        "0": { "name": "punctuation.definition.tag.begin.html" }
+                    },
+                    "end": "(?=/>|>|$)",
+                    "patterns": [
+                        {
+                            "name": "entity.name.tag.html",
+                            "match": "[a-zA-Z][a-zA-Z0-9-]*"
+                        },
+                        {
+                            "name": "entity.other.attribute-name.html",
+                            "match": "\\b([a-zA-Z][a-zA-Z0-9:-]*)\\s*=",
+                            "captures": {
+                                "1": { "name": "entity.other.attribute-name.html" }
+                            }
+                        },
+                        {
+                            "name": "string.quoted.double.html",
+                            "begin": "\"",
+                            "end": "\"",
+                            "patterns": [
+                                {
+                                    "name": "meta.embedded.line.erb",
+                                    "begin": "<%=",
+                                    "end": "%>",
+                                    "patterns": [
+                                        { "include": "source.ruby" },
+                                        { "include": "#ruby-code-fallback" }
+                                    ]
+                                },
+                                {
+                                    "name": "meta.embedded.line.erb",
+                                    "begin": "<%",
+                                    "end": "%>",
+                                    "patterns": [
+                                        { "include": "source.ruby" },
+                                        { "include": "#ruby-code-fallback" }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "string.quoted.single.html",
+                            "begin": "'",
+                            "end": "'",
+                            "patterns": [
+                                {
+                                    "name": "meta.embedded.line.erb",
+                                    "begin": "<%=",
+                                    "end": "%>",
+                                    "patterns": [
+                                        { "include": "source.ruby" },
+                                        { "include": "#ruby-code-fallback" }
+                                    ]
+                                },
+                                {
+                                    "name": "meta.embedded.line.erb",
+                                    "begin": "<%",
+                                    "end": "%>",
+                                    "patterns": [
+                                        { "include": "source.ruby" },
+                                        { "include": "#ruby-code-fallback" }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "meta.embedded.line.erb",
+                            "begin": "<%=",
+                            "end": "%>",
+                            "patterns": [
+                                { "include": "source.ruby" },
+                                { "include": "#ruby-code-fallback" }
+                            ]
+                        },
+                        {
+                            "name": "meta.embedded.line.erb",
+                            "begin": "<%",
+                            "end": "%>",
+                            "patterns": [
+                                { "include": "source.ruby" },
+                                { "include": "#ruby-code-fallback" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "punctuation.definition.tag.end.html",
+                    "match": "/?>",
+                    "captures": {
+                        "0": { "name": "punctuation.definition.tag.end.html" }
+                    }
+                },
+                {
+                    "name": "meta.tag.structure.html",
+                    "begin": "</",
+                    "beginCaptures": {
+                        "0": { "name": "punctuation.definition.tag.begin.html" }
+                    },
+                    "end": ">",
+                    "endCaptures": {
+                        "0": { "name": "punctuation.definition.tag.end.html" }
+                    },
+                    "patterns": [
+                        {
+                            "name": "entity.name.tag.html",
+                            "match": "[a-zA-Z][a-zA-Z0-9-]*"
+                        }
+                    ]
+                },
+                {
+                    "name": "text.html.basic",
+                    "match": "[^<]+"
+                }
+            ]
+        },
+        "plain-filter": {
+            "begin": "^(\\s*)(:plain)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                {
+                    "name": "text.plain.haml",
+                    "match": ".*"
+                }
+            ]
+        },
+        "escaped-filter": {
+            "begin": "^(\\s*)(:escaped)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                {
+                    "name": "text.escaped.haml",
+                    "match": ".*"
+                }
+            ]
+        },
+        "preserve-filter": {
+            "begin": "^(\\s*)(:preserve)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                {
+                    "name": "text.preserve.haml",
+                    "match": ".*"
+                }
+            ]
+        },
+        "cdata-filter": {
+            "begin": "^(\\s*)(:cdata)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                {
+                    "name": "text.cdata.haml",
+                    "match": ".*"
+                }
+            ]
+        },
+        "less-filter": {
+            "begin": "^(\\s*)(:less)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "source.css.less" }
+            ]
+        },
+        "textile-filter": {
+            "begin": "^(\\s*)(:textile)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "#textile-syntax" }
+            ]
+        },
+        "textile-syntax": {
+            "patterns": [
+                {
+                    "name": "markup.heading.textile",
+                    "match": "^h[1-6]\\."
+                },
+                {
+                    "name": "markup.bold.textile",
+                    "match": "\\*[^*]+\\*"
+                },
+                {
+                    "name": "markup.italic.textile",
+                    "match": "_[^_]+_"
+                },
+                {
+                    "name": "markup.underline.textile",
+                    "match": "\\+[^+]+\\+"
+                },
+                {
+                    "name": "markup.strikethrough.textile",
+                    "match": "-[^-]+-"
+                },
+                {
+                    "name": "markup.code.textile",
+                    "match": "@[^@]+@"
+                },
+                {
+                    "name": "markup.raw.textile",
+                    "match": "==[^=]+=="
+                },
+                {
+                    "name": "string.other.link.textile",
+                    "match": "\"[^\"]+\":https?://[^\\s]+"
+                },
+                {
+                    "name": "string.other.link.textile",
+                    "match": "\"[^\"]+\":/[^\\s]+"
+                },
+                {
+                    "name": "markup.list.unnumbered.textile",
+                    "match": "^\\s*\\*\\s+"
+                },
+                {
+                    "name": "markup.list.numbered.textile",
+                    "match": "^\\s*#\\s+"
+                },
+                {
+                    "name": "markup.quote.textile",
+                    "match": "^bq\\.\\s+"
+                },
+                {
+                    "name": "markup.code.block.textile",
+                    "begin": "^bc\\.\\s*$",
+                    "end": "^\\s*$"
+                },
+                {
+                    "name": "markup.table.cell.textile",
+                    "match": "\\|"
+                },
+                {
+                    "name": "text.plain.textile",
+                    "match": ".*"
+                }
             ]
         },
         "haml-tag-with-multiline-hash": {
@@ -83,6 +628,7 @@
                     "patterns": [
                         { "include": "#tag-id" },
                         { "include": "#tag-class" },
+                        { "include": "#tag-object-reference" },
                         { "include": "#tag-attributes-hash" },
                         { "include": "#tag-attributes-html" },
                         { "include": "#tag-ruby-output" },
@@ -99,6 +645,7 @@
                     "patterns": [
                         { "include": "#tag-id" },
                         { "include": "#tag-class" },
+                        { "include": "#tag-object-reference" },
                         { "include": "#tag-attributes-hash" },
                         { "include": "#tag-attributes-html" },
                         { "include": "#tag-ruby-output" },
@@ -114,6 +661,33 @@
         "tag-class": {
             "name": "entity.name.tag.class.haml",
             "match": "\\.[\\w-]+"
+        },
+        "tag-object-reference": {
+            "name": "meta.object-reference.haml",
+            "begin": "\\[",
+            "beginCaptures": {
+                "0": { "name": "punctuation.definition.object-reference.haml" }
+            },
+            "end": "\\]",
+            "endCaptures": {
+                "0": { "name": "punctuation.definition.object-reference.haml" }
+            },
+            "patterns": [
+                {
+                    "name": "variable.other.readwrite.instance.ruby",
+                    "match": "@[a-zA-Z_][a-zA-Z0-9_]*"
+                },
+                {
+                    "name": "constant.language.symbol.ruby",
+                    "match": ":[a-zA-Z_][a-zA-Z0-9_]*[?!]?"
+                },
+                {
+                    "name": "punctuation.separator.object.ruby",
+                    "match": ","
+                },
+                { "include": "source.ruby" },
+                { "include": "#ruby-code-fallback" }
+            ]
         },
         "tag-attributes-hash": {
             "begin": "\\{",
@@ -252,6 +826,8 @@
             "patterns": [
                 { "include": "#comment" },
                 { "include": "#ruby-filter" },
+                { "include": "#css-filter" },
+                { "include": "#javascript-filter" },
                 { "include": "#haml-tag-with-multiline-hash" },
                 { "include": "#haml-tag" },
                 { "include": "#ruby-code" },
@@ -293,6 +869,8 @@
             "patterns": [
                 { "include": "#comment" },
                 { "include": "#ruby-filter" },
+                { "include": "#css-filter" },
+                { "include": "#javascript-filter" },
                 { "include": "#haml-tag-with-multiline-hash" },
                 { "include": "#haml-tag" },
                 { "include": "#ruby-code" },
