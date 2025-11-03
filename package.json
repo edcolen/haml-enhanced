@@ -2,7 +2,7 @@
     "name": "haml-enhanced",
     "displayName": "HAML Enhanced",
     "description": "Enhanced HAML syntax highlighting with proper multi-line hash support",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "license": "MIT",
     "icon": "icon.png",
     "author": {
