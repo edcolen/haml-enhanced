@@ -1,0 +1,393 @@
+{
+    "name": "HAML Enhanced",
+    "scopeName": "text.haml",
+    "fileTypes": ["haml"],
+    "patterns": [
+        { "include": "#comment" },
+        { "include": "#ruby-filter" },
+        { "include": "#haml-tag-with-multiline-hash" },
+        { "include": "#haml-tag" },
+        { "include": "#ruby-code" },
+        { "include": "#plain-text" }
+    ],
+    "repository": {
+        "comment": {
+            "patterns": [
+                {
+                    "name": "comment.line.haml",
+                    "match": "^\\s*(-#|/).*$"
+                }
+            ]
+        },
+        "ruby-filter": {
+            "begin": "^(\\s*)(:ruby)\\s*$",
+            "beginCaptures": {
+                "2": { "name": "keyword.control.haml" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "source.ruby" },
+                { "include": "#ruby-code-fallback" }
+            ]
+        },
+        "haml-tag-with-multiline-hash": {
+            "begin": "^(\\s*)(%[\\w-]+|\\.[\\w-]+|#[\\w-]+)?\\s*(\\{)",
+            "beginCaptures": {
+                "2": { "name": "entity.name.tag.class.haml" },
+                "3": { "name": "punctuation.section.hash.begin.ruby" }
+            },
+            "end": "^(?!\\1\\s)",
+            "patterns": [
+                { "include": "#multiline-hash-content" }
+            ]
+        },
+        "multiline-hash-content": {
+            "patterns": [
+                {
+                    "name": "meta.hash.ruby",
+                    "match": "\\b([a-zA-Z_][\\w]*|[\"'].*?[\"'])\\s*(:)\\s*",
+                    "captures": {
+                        "1": { "name": "constant.language.symbol.hashkey.ruby" },
+                        "2": { "name": "punctuation.separator.key-value.ruby" }
+                    }
+                },
+                { "include": "#ruby-symbol" },
+                { "include": "#ruby-string" },
+                { "include": "#ruby-boolean" },
+                { "include": "#ruby-number" },
+                { "include": "#ruby-brackets" },
+                { "include": "#ruby-array" },
+                { "include": "#ruby-hash" },
+                { "include": "#ruby-embedded" },
+                { "include": "#ruby-variable" },
+                {
+                    "name": "punctuation.separator.object.ruby",
+                    "match": ","
+                },
+                {
+                    "name": "punctuation.section.hash.end.ruby",
+                    "match": "\\}"
+                }
+            ]
+        },
+        "haml-tag": {
+            "patterns": [
+                {
+                    "name": "meta.tag.haml",
+                    "begin": "^(\\s*)(%[\\w:-]+)",
+                    "beginCaptures": {
+                        "2": { "name": "entity.name.tag.haml" }
+                    },
+                    "end": "$",
+                    "patterns": [
+                        { "include": "#tag-id" },
+                        { "include": "#tag-class" },
+                        { "include": "#tag-attributes-hash" },
+                        { "include": "#tag-attributes-html" },
+                        { "include": "#tag-ruby-output" },
+                        { "include": "#ruby-embedded" }
+                    ]
+                },
+                {
+                    "name": "meta.tag.haml",
+                    "begin": "^(\\s*)(\\.[\\w-]+|#[\\w-]+)",
+                    "beginCaptures": {
+                        "2": { "name": "entity.name.tag.class.haml" }
+                    },
+                    "end": "$",
+                    "patterns": [
+                        { "include": "#tag-id" },
+                        { "include": "#tag-class" },
+                        { "include": "#tag-attributes-hash" },
+                        { "include": "#tag-attributes-html" },
+                        { "include": "#tag-ruby-output" },
+                        { "include": "#ruby-embedded" }
+                    ]
+                }
+            ]
+        },
+        "tag-id": {
+            "name": "entity.name.tag.id.haml",
+            "match": "#[\\w-]+"
+        },
+        "tag-class": {
+            "name": "entity.name.tag.class.haml",
+            "match": "\\.[\\w-]+"
+        },
+        "tag-attributes-hash": {
+            "begin": "\\{",
+            "beginCaptures": {
+                "0": { "name": "punctuation.section.hash.begin.ruby" }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": { "name": "punctuation.section.hash.end.ruby" }
+            },
+            "patterns": [
+                { "include": "#ruby-hash-content" }
+            ]
+        },
+        "tag-attributes-html": {
+            "begin": "\\(",
+            "beginCaptures": {
+                "0": { "name": "punctuation.definition.parameters.begin.haml" }
+            },
+            "end": "\\)",
+            "endCaptures": {
+                "0": { "name": "punctuation.definition.parameters.end.haml" }
+            },
+            "patterns": [
+                { "include": "#html-attribute" },
+                { "include": "#ruby-string" },
+                { "include": "#ruby-embedded" }
+            ]
+        },
+        "html-attribute": {
+            "match": "([\\w:-]+)\\s*(=)\\s*",
+            "captures": {
+                "1": { "name": "entity.other.attribute-name.haml" },
+                "2": { "name": "punctuation.separator.key-value.haml" }
+            }
+        },
+        "tag-ruby-output": {
+            "begin": "=\\s+",
+            "beginCaptures": {
+                "0": { "name": "keyword.operator.haml" }
+            },
+            "end": "(?=$)",
+            "patterns": [
+                { "include": "source.ruby" },
+                { "include": "#ruby-code-fallback" }
+            ]
+        },
+        "ruby-hash-content": {
+            "patterns": [
+                {
+                    "match": "([a-zA-Z_][\\w]*)\\s*(:)",
+                    "captures": {
+                        "1": { "name": "constant.language.symbol.hashkey.ruby" },
+                        "2": { "name": "punctuation.separator.key-value.ruby" }
+                    }
+                },
+                { "include": "#ruby-symbol" },
+                { "include": "#ruby-string" },
+                { "include": "#ruby-boolean" },
+                { "include": "#ruby-number" },
+                { "include": "#ruby-brackets" },
+                { "include": "#ruby-embedded" },
+                { "include": "#ruby-variable" },
+                {
+                    "name": "punctuation.separator.object.ruby",
+                    "match": ","
+                }
+            ]
+        },
+        "ruby-code": {
+            "patterns": [
+                {
+                    "name": "meta.line.ruby.haml",
+                    "begin": "^(\\s*)(=|-|~)\\s+",
+                    "beginCaptures": {
+                        "2": { "name": "keyword.operator.haml" }
+                    },
+                    "end": "$",
+                    "patterns": [
+                        { "include": "source.ruby" },
+                        { "include": "#ruby-code-fallback" }
+                    ]
+                }
+            ]
+        },
+        "ruby-code-fallback": {
+            "patterns": [
+                {
+                    "name": "meta.block.parameters.ruby",
+                    "begin": "\\|",
+                    "beginCaptures": {
+                        "0": { "name": "punctuation.separator.variable.ruby" }
+                    },
+                    "end": "\\|",
+                    "endCaptures": {
+                        "0": { "name": "punctuation.separator.variable.ruby" }
+                    },
+                    "patterns": [
+                        {
+                            "name": "variable.parameter.ruby",
+                            "match": "[a-zA-Z_][a-zA-Z0-9_]*"
+                        },
+                        {
+                            "name": "punctuation.separator.object.ruby",
+                            "match": ","
+                        }
+                    ]
+                },
+                {
+                    "name": "keyword.control.ruby",
+                    "match": "\\b(if|unless|elsif|else|end|case|when|while|until|for|do|begin|rescue|ensure|return|yield|break|next|redo|retry|raise|super|self|then|and|or|not|in)\\b"
+                },
+                {
+                    "name": "keyword.other.special-method.ruby",
+                    "match": "\\b(require|require_relative|include|extend|attr_reader|attr_writer|attr_accessor|alias|private|public|protected|module_function)\\b"
+                },
+                {
+                    "name": "variable.other.constant.ruby",
+                    "match": "\\b[A-Z][A-Z0-9_]*\\b"
+                },
+                {
+                    "name": "variable.other.readwrite.instance.ruby",
+                    "match": "@[a-zA-Z_][a-zA-Z0-9_]*"
+                },
+                {
+                    "name": "variable.other.readwrite.class.ruby",
+                    "match": "@@[a-zA-Z_][a-zA-Z0-9_]*"
+                },
+                {
+                    "name": "support.function.kernel.ruby",
+                    "match": "\\b(puts|print|p|gets|readline|printf|sprintf|format|warn)\\b"
+                },
+                {
+                    "name": "entity.name.function.ruby",
+                    "match": "\\b[a-z_][a-zA-Z0-9_]*(?=\\s*\\(|\\s+['\"]|\\s+:)"
+                },
+                { "include": "#ruby-string" },
+                { "include": "#ruby-symbol" },
+                { "include": "#ruby-number" },
+                { "include": "#ruby-boolean" },
+                { "include": "#ruby-embedded" },
+                { "include": "#ruby-brackets" },
+                { "include": "#ruby-hash" },
+                { "include": "#ruby-array" },
+                {
+                    "name": "keyword.operator.ruby",
+                    "match": "(==|!=|<=|>=|<=>|<|>|===|!~|=~|\\+|-|\\*|/|%|\\*\\*|&|\\||\\^|~|<<|>>|&&|\\|\\||!|\\?|:|=)"
+                },
+                {
+                    "name": "variable.other.ruby",
+                    "match": "\\b[a-z_][a-zA-Z0-9_]*\\b"
+                }
+            ]
+        },
+        "ruby-embedded": {
+            "patterns": [
+                {
+                    "name": "source.ruby.embedded.haml",
+                    "begin": "#\\{",
+                    "beginCaptures": {
+                        "0": { "name": "punctuation.section.embedded.begin.ruby" }
+                    },
+                    "end": "\\}",
+                    "endCaptures": {
+                        "0": { "name": "punctuation.section.embedded.end.ruby" }
+                    },
+                    "patterns": [
+                        { "include": "source.ruby" }
+                    ]
+                }
+            ]
+        },
+        "ruby-string": {
+            "patterns": [
+                {
+                    "name": "string.quoted.double.ruby",
+                    "begin": "\"",
+                    "end": "\"",
+                    "patterns": [
+                        {
+                            "name": "constant.character.escape.ruby",
+                            "match": "\\\\."
+                        },
+                        { "include": "#ruby-embedded" }
+                    ]
+                },
+                {
+                    "name": "string.quoted.single.ruby",
+                    "begin": "'",
+                    "end": "'",
+                    "patterns": [
+                        {
+                            "name": "constant.character.escape.ruby",
+                            "match": "\\\\."
+                        }
+                    ]
+                }
+            ]
+        },
+        "ruby-symbol": {
+            "patterns": [
+                {
+                    "name": "constant.language.symbol.ruby",
+                    "match": ":[a-zA-Z_][a-zA-Z0-9_]*[?!]?"
+                }
+            ]
+        },
+        "ruby-number": {
+            "name": "constant.numeric.ruby",
+            "match": "\\b\\d+(\\.\\d+)?\\b"
+        },
+        "ruby-boolean": {
+            "name": "constant.language.ruby",
+            "match": "\\b(true|false|nil)\\b"
+        },
+        "ruby-array": {
+            "begin": "\\[",
+            "beginCaptures": {
+                "0": { "name": "punctuation.section.array.begin.ruby" }
+            },
+            "end": "\\]",
+            "endCaptures": {
+                "0": { "name": "punctuation.section.array.end.ruby" }
+            },
+            "patterns": [
+                { "include": "#ruby-symbol" },
+                { "include": "#ruby-string" },
+                { "include": "#ruby-number" },
+                { "include": "#ruby-hash" },
+                { "include": "#ruby-embedded" },
+                { "include": "#ruby-variable" },
+                {
+                    "name": "punctuation.separator.object.ruby",
+                    "match": ","
+                }
+            ]
+        },
+        "ruby-hash": {
+            "begin": "\\{",
+            "beginCaptures": {
+                "0": { "name": "punctuation.section.hash.begin.ruby" }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": { "name": "punctuation.section.hash.end.ruby" }
+            },
+            "patterns": [
+                { "include": "#ruby-hash-content" }
+            ]
+        },
+        "ruby-brackets": {
+            "begin": "\\[",
+            "beginCaptures": {
+                "0": { "name": "punctuation.section.brackets.begin.ruby" }
+            },
+            "end": "\\]",
+            "endCaptures": {
+                "0": { "name": "punctuation.section.brackets.end.ruby" }
+            },
+            "patterns": [
+                { "include": "#ruby-symbol" },
+                { "include": "#ruby-string" },
+                { "include": "#ruby-number" },
+                { "include": "#ruby-variable" },
+                { "include": "#ruby-embedded" }
+            ]
+        },
+        "ruby-variable": {
+            "name": "variable.other.ruby",
+            "match": "\\b[a-z_][\\w]*\\b"
+        },
+        "plain-text": {
+            "name": "text.haml",
+            "match": "^\\s*[^%\\.#=-].*$"
+        }
+    }
+}
+

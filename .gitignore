@@ -1,0 +1,14 @@
+node_modules
+*.vsix
+.vscode-test/
+.DS_Store
+
+# Publishing guides and documentation (for local reference only)
+TESTING.md
+QUICKSTART.md
+PUBLISH_CHECKLIST.md
+READY_TO_PUBLISH.md
+FINAL_STATUS.md
+PUBLISH_NOW.md
+UPDATED_SUMMARY.md
+

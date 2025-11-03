@@ -1,0 +1,14 @@
+.vscode/**
+.vscode-test/**
+.gitignore
+.git/**
+node_modules/**
+*.vsix
+test.haml
+TESTING.md
+QUICKSTART.md
+PUBLISH_CHECKLIST.md
+READY_TO_PUBLISH.md
+FINAL_STATUS.md
+PUBLISH_NOW.md
+

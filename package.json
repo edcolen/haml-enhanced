@@ -1,0 +1,57 @@
+{
+    "name": "haml-enhanced",
+    "displayName": "HAML Enhanced",
+    "description": "Enhanced HAML syntax highlighting with proper multi-line hash support",
+    "version": "0.1.0",
+    "license": "MIT",
+    "icon": "icon.png",
+    "author": {
+        "name": "Ed Colen"
+    },
+    "publisher": "EdColen",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/edcolen/haml-enhanced"
+    },
+    "homepage": "https://github.com/edcolen/haml-enhanced#readme",
+    "bugs": {
+        "url": "https://github.com/edcolen/haml-enhanced/issues"
+    },
+    "engines": {
+        "vscode": "^1.53.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "keywords": [
+        "haml",
+        "ruby",
+        "template",
+        "syntax highlighting",
+        "multiline",
+        "rails"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "haml",
+                "aliases": [
+                    "HAML",
+                    "haml"
+                ],
+                "extensions": [
+                    ".haml"
+                ],
+                "configuration": "./language-configuration/haml-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "haml",
+                "scopeName": "text.haml",
+                "path": "./syntaxes/haml.tmLanguage.json"
+            }
+        ]
+    }
+}
+

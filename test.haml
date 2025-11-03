@@ -1,0 +1,243 @@
+-# ============================================================================
+-# HAML Enhanced - Comprehensive Test File
+-# ============================================================================
+-# This file tests all syntax highlighting features including multiline hashes
+
+
+-# ============================================================================
+-# 1. COMMENTS
+-# ============================================================================
+
+-# This is a HAML comment (not rendered)
+/ This is an HTML comment (rendered)
+
+
+-# ============================================================================
+-# 2. BASIC HAML TAGS
+-# ============================================================================
+
+%div
+%section
+%article
+%h1 Basic heading
+%p This is a paragraph
+
+
+-# ============================================================================
+-# 3. CLASSES AND IDS
+-# ============================================================================
+
+%div.container
+%div#main-content
+%div.container.wrapper
+%div#main.container.wrapper
+.implicit-div
+#implicit-id
+.multiple.classes.chained
+
+
+-# ============================================================================
+-# 4. SINGLE-LINE HASH ATTRIBUTES
+-# ============================================================================
+
+%div{ class: "simple", id: "test" }
+%a{ href: "/path", target: "_blank" }
+%input{ type: "text", name: "username", placeholder: "Enter name" }
+%div{ data: { controller: "stimulus" } }
+
+
+-# ============================================================================
+-# 5. MULTILINE HASH ATTRIBUTES (Main Feature!)
+-# ============================================================================
+
+-# Test 1: Basic multiline hash
+.zen-mobile-table-wrapper{
+  class: local_assigns[:class],
+  id: "unique-id",
+  data: { controller: "tabbed-table" }
+}
+
+-# Test 2: Complex nested hashes
+%button.btn-primary{
+  type: "button",
+  role: "tab",
+  "aria-selected": true,
+  "data-tab": tab_key,
+  "data-target": "controller#action",
+  class: "btn-#{is_active ? 'active' : 'inactive'}",
+  data: {
+    controller: "nested-controller",
+    action: "click->handler#method"
+  }
+}
+
+-# Test 3: Hash with various value types
+.component{
+  string: "value",
+  symbol: :symbol_value,
+  number: 42,
+  float: 3.14,
+  boolean_true: true,
+  boolean_false: false,
+  nil_value: nil,
+  array: [1, 2, 3],
+  nested: { key: "value" }
+}
+
+-# Test 4: Hash with interpolation
+%div{
+  class: "container-#{size}",
+  data: { id: user.id, name: "#{user.first_name} #{user.last_name}" }
+}
+
+-# Test 5: HTML-style attributes with parentheses
+%img(src="/image.jpg" alt="Description" class="responsive")
+%a(href="http://example.com" target="_blank") Link text
+
+
+-# ============================================================================
+-# 6. RUBY CODE BLOCKS
+-# ============================================================================
+
+-# Silent Ruby code (-)
+- if user.present?
+  %p User is present
+- else
+  %p No user found
+
+- users.each do |user|
+  .user-card
+    %h3= user.name
+    %p= user.email
+
+- case status
+- when :active
+  %span.badge.active Active
+- when :inactive
+  %span.badge.inactive Inactive
+- else
+  %span.badge.unknown Unknown
+
+
+-# ============================================================================
+-# 7. OUTPUT RUBY CODE (=)
+-# ============================================================================
+
+= title
+= user.full_name
+= link_to "Home", root_path
+= render "partial", locals: { key: "value", number: 42 }
+= content_tag :div, "Content", class: "wrapper"
+
+
+-# ============================================================================
+-# 8. STRING INTERPOLATION
+-# ============================================================================
+
+%p Welcome, #{user.name}!
+%h1 Total: #{items.count} items
+.alert-#{type} Message: #{message}
+%div{ class: "container-#{size}", id: "item-#{item.id}" }
+
+
+-# ============================================================================
+-# 9. RUBY FILTERS
+-# ============================================================================
+
+:ruby
+  def helper_method
+    "This is Ruby code"
+  end
+  
+  @variable = calculate_something
+  items = [1, 2, 3].map { |n| n * 2 }
+
+
+-# ============================================================================
+-# 10. COMPLEX REAL-WORLD EXAMPLE
+-# ============================================================================
+
+- if is_mobile
+  .zen-mobile-table-wrapper{
+    class: local_assigns[:class],
+    data: { 
+      controller: "tabbed-table", 
+      "tabbed-table-active-tab-value": local_assigns[:active_tab] 
+    }
+  }
+    .zen-mobile-table-container
+      - if local_assigns[:title]
+        .zen-mobile-table-header
+          .zen-mobile-table-title
+            = local_assigns[:title]
+          - if local_assigns[:subtitle]
+            .zen-mobile-table-subtitle
+              = local_assigns[:subtitle]
+
+      / Mobile Tab Navigation
+      - if tabs.present?
+        .zen-mobile-table-nav
+          .zen-mobile-table-tabs{
+            role: "tablist",
+            "aria-label": "Tab navigation"
+          }
+            - tabs.each_with_index do |tab, index|
+              - tab_key = tab.is_a?(Hash) ? tab[:key] : tab
+              - tab_label = tab.is_a?(Hash) ? tab[:label] : tab
+              - tab_count = tab.is_a?(Hash) ? tab[:count] : nil
+              - is_active = (local_assigns[:active_tab] || tabs.first_key) == tab_key
+              
+              %button.zen-mobile-table-tab{
+                type: "button",
+                role: "tab",
+                "aria-selected": is_active,
+                "data-tab": tab_key,
+                "data-tabbed-table-target": "tab",
+                "data-action": "click->tabbed-table#switchTab",
+                class: "zen-mobile-table-tab-#{is_active ? 'active' : 'inactive'}"
+              }
+                %span.zen-mobile-table-tab-label
+                  = tab_label
+                - if tab_count
+                  %span.zen-mobile-table-tab-count
+                    = "(#{tab_count})"
+
+
+-# ============================================================================
+-# 11. EDGE CASES
+-# ============================================================================
+
+-# Empty tag
+%div
+
+-# Tag with only classes
+.class-only
+
+-# Tag with only ID
+#id-only
+
+-# Self-closing tag
+%br/
+%hr/
+%img{src: "image.jpg"}/
+
+-# Multiple levels of nesting
+%ul.navigation
+  %li
+    %a{href: "#"} Home
+  %li
+    %a{href: "#"} About
+    %ul.submenu
+      %li
+        %a{href: "#"} Team
+      %li
+        %a{href: "#"} History
+
+-# Mixed attribute styles
+%input{type: "text"}(required="required")
+
+
+-# ============================================================================
+-# END OF TEST FILE
+-# ============================================================================
+
