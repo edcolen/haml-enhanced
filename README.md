@@ -2,6 +2,20 @@
 
 Enhanced HAML syntax highlighting for Visual Studio Code with proper multi-line hash support.
 
+## ⚠️ Important: Conflicting Extensions
+
+**If you have other HAML syntax highlighting extensions installed, you must disable them** to avoid conflicts and unwanted highlighting effects. Multiple HAML extensions can interfere with each other and cause incorrect syntax highlighting.
+
+To disable conflicting extensions:
+1. Open VS Code Extensions (`Cmd+Shift+X` / `Ctrl+Shift+X`)
+2. Search for "HAML" or "haml"
+3. Disable any other HAML syntax highlighting extensions (keep only "HAML Enhanced" enabled)
+
+Common conflicting extensions include:
+- "HAML" (by various authors)
+- "HAML Syntax Highlighting"
+- Any other extension that provides HAML language support
+
 ## Features
 
 - **Multi-line Hash Support**: Properly highlights hash keys, values, and symbols across multiple indented lines
